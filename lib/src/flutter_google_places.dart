@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_api_headers/google_api_headers.dart';
-import 'package:google_maps_webservice/places.dart';
+import 'package:google_maps_apis/places.dart';
 import 'package:http/http.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -158,7 +158,7 @@ class _PlacesAutocompleteOverlayState extends PlacesAutocompleteState {
         );
       } else if (_queryTextController!.text.isEmpty ||
           _response == null ||
-          _response!.predictions.isEmpty) {
+          !_response!.hasPredictions) {
         body = Material(
           color: theme.dialogBackgroundColor,
           borderRadius: BorderRadius.only(
@@ -177,14 +177,15 @@ class _PlacesAutocompleteOverlayState extends PlacesAutocompleteState {
             color: theme.dialogBackgroundColor,
             child: ListBody(
               children: _response!.predictions
-                  .map(
-                    (p) => PredictionTile(
-                      prediction: p,
-                      onTap: Navigator.of(context).pop,
-                      resultTextStyle: widget.resultTextStyle,
-                    ),
-                  )
-                  .toList(),
+                      ?.map(
+                        (p) => PredictionTile(
+                          prediction: p,
+                          onTap: Navigator.of(context).pop,
+                          resultTextStyle: widget.resultTextStyle,
+                        ),
+                      )
+                      .toList() ??
+                  [],
             ),
           ),
         );
@@ -267,7 +268,7 @@ class PlacesAutocompleteResultState extends State<PlacesAutocompleteResult> {
 
     if (state._queryTextController!.text.isEmpty ||
         state._response == null ||
-        state._response!.predictions.isEmpty) {
+        !state._response!.hasPredictions) {
       final children = <Widget>[];
       if (state._searching) {
         children.add(_Loader());
@@ -276,7 +277,7 @@ class PlacesAutocompleteResultState extends State<PlacesAutocompleteResult> {
       return Stack(children: children);
     }
     return PredictionsListView(
-      predictions: state._response!.predictions,
+      predictions: state._response!.predictions ?? [],
       onTap: widget.onTap,
       resultTextStyle: widget.resultTextStyle,
     );

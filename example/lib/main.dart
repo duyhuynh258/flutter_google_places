@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:google_maps_webservice/places.dart';
+import 'package:google_maps_apis/places.dart';
 
 const kGoogleApiKey = "API_KEY";
 
@@ -137,10 +137,9 @@ Future<void> displayPrediction(Prediction? p, BuildContext context) async {
       apiKey: kGoogleApiKey,
       apiHeaders: await const GoogleApiHeaders().getHeaders(),
     );
-    PlacesDetailsResponse detail =
-        await _places.getDetailsByPlaceId(p.placeId!);
-    final lat = detail.result.geometry!.location.lat;
-    final lng = detail.result.geometry!.location.lng;
+    PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId!);
+    final lat = detail.result?.geometry?.location.lat;
+    final lng = detail.result?.geometry?.location.lng;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("${p.description} - $lat/$lng")),
@@ -192,7 +191,7 @@ class _CustomSearchScaffoldState extends PlacesAutocompleteState {
   @override
   void onResponse(PlacesAutocompleteResponse? response) {
     super.onResponse(response);
-    if (response != null && response.predictions.isNotEmpty) {
+    if (response != null && response.hasPredictions) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Got answer")),
       );
@@ -219,6 +218,5 @@ class Uuid {
 
   int _generateBits(int bitCount) => _random.nextInt(1 << bitCount);
 
-  String _printDigits(int value, int count) =>
-      value.toRadixString(16).padLeft(count, '0');
+  String _printDigits(int value, int count) => value.toRadixString(16).padLeft(count, '0');
 }
