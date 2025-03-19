@@ -5,7 +5,6 @@ repository: https://github.com/fluttercommunity/flutter_google_places
 
 environment:
   sdk: '>=3.5.0'
-  flutter: ">=3.5.0"
 
 dependencies:
   flutter:
