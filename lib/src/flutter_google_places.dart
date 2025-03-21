@@ -594,3 +594,7 @@ class PlacesAutocomplete {
     }
   }
 }
+
+extension AutoCompleteResponseX on PlacesAutocompleteResponse {
+  bool get hasPredictions => predictions?.isNotEmpty == false;
+}
